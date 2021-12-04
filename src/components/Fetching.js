@@ -6,15 +6,16 @@ const Fetching = () => {
   const [characters, setCharacters] = useState([]);
   const [page, setPage] = useState(1);
 
-  const fetchUsers = async () => {
+  const fetchCharacters = async () => {
     const res = await axios.get(
       "https://rickandmortyapi.com/api/character/?page=" + page
     );
+    
     return res;
   };
   const { data, fetchNextPage, isLoading } = useInfiniteQuery(
     "characters",
-    fetchUsers
+    fetchCharacters
   );
 
   //usememo potrzebne do dodawania do arrayki z responsa
@@ -22,10 +23,8 @@ const Fetching = () => {
   useEffect(() => {
     if (data) {
       setCharacters(data.pages[0].data.results);
-
-      console.log(data);
     }
-  }, [data]);
+  }, [data, page]);
 
   // console.log(data.pages[0].data.results);
   if (isLoading) {
@@ -45,7 +44,7 @@ const Fetching = () => {
       </div>
       <button
         onClick={() => {
-          setPage(page + 1);
+          setPage(prevPage => prevPage + 1);
         }}
       >
         Load more
