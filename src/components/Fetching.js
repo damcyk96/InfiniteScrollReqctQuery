@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import axios from "axios";
 import { useInfiniteQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -12,13 +12,22 @@ const Fetching = () => {
     );
     return res;
   };
-  const {
-    data,
-    fetchNextPage,
-    isLoading,
-  } = useInfiniteQuery("characters", fetchUsers);
+  const { data, fetchNextPage, isLoading } = useInfiniteQuery(
+    "characters",
+    fetchUsers
+  );
 
-  console.log(data.pages[0].data.results);
+  //usememo potrzebne do dodawania do arrayki z responsa
+
+  useEffect(() => {
+    if (data) {
+      setCharacters(data.pages[0].data.results);
+
+      console.log(data);
+    }
+  }, [data]);
+
+  // console.log(data.pages[0].data.results);
   if (isLoading) {
     return <h1>Loading</h1>;
   }
@@ -27,7 +36,7 @@ const Fetching = () => {
     <div>
       <h1>Próba infinite loadingu </h1>
       <div>
-        {characters.map((item) => (
+        {characters?.map((item) => (
           <div key={item.id}>
             <h3>{item.name}</h3>
             <img src={item.image} alt={item.name} />
