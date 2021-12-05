@@ -15,22 +15,18 @@ const Fetching = () => {
     return response.json();
   };
   
-  const {
-    data,
-    isLoading,
-    isFetching,
-    fetchNextPage,
-    hasNextPage,
-    error
-  } = useInfiniteQuery('characters', fetchCharacters, {
-    getNextPageParam: (lastPage, pages) => {
-      if (lastPage.page < lastPage.total_pages) return lastPage.page + 1;
-      return false;
+  const { data, isLoading, fetchNextPage} = useInfiniteQuery(['characters'], ({ pageParam = 1 }) => fetchCharacters(pageParam), {
+    getNextPageParam: (lastPage) => {
+      const nextUrl = lastPage.info.next
+      if (nextUrl) {
+        return nextUrl.charAt(nextUrl.length - 1)
+      }
+      console.log("dupa")
+      return false
     }
-  });
+  })
 
-  console.log(hasNextPage)
-
+console.log(data)
 
   if (isLoading) {
     return <h1>Loading</h1>;
